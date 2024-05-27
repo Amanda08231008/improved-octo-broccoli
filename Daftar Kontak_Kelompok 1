@@ -1,0 +1,84 @@
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QTableWidget, QTableWidgetItem, QAbstractItemView
+from PyQt5.QtCore import Qt
+import sys
+
+class DaftarKontak(QWidget):
+    def _init_(self):
+        super()._init_()
+
+        self.setWindowTitle("Aplikasi Daftar Kontak")
+        self.setGeometry(800, 500, 800, 500)
+
+        layout = QVBoxLayout()
+
+        self.nama_label = QLabel("Nama Kontak:")
+        self.nama_label.setStyleSheet("color: navy")  # Set the color of the label
+        self.nama_input = QLineEdit()
+        self.nomor_label = QLabel("Nomor Kontak:")
+        self.nomor_label.setStyleSheet("color: navy")  # Set the color of the label
+        self.nomor_input = QLineEdit()
+        self.tambah_button = QPushButton("Tambah Kontak")
+        self.tambah_button.setStyleSheet("background-color: pink; color: black")  # Set the color of the button
+        self.tampilkan_button = QPushButton("Tampilkan Kontak")
+        self.tampilkan_button.setStyleSheet("background-color: grey; color: black")  # Set the color of the button
+        self.hapus_button = QPushButton("Hapus Kontak")
+        self.hapus_button.setStyleSheet("background-color: purple; color: white")  # Set the color of the button
+        self.keluar_button = QPushButton("Keluar")
+        self.keluar_button.setStyleSheet("background-color: navy; color: white")  # Set the color of the button
+
+        self.tabel = QTableWidget()
+        self.tabel.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tabel.setColumnCount(2)
+        self.tabel.setHorizontalHeaderItem(0, QTableWidgetItem("Nama"))
+        self.tabel.setHorizontalHeaderItem(1, QTableWidgetItem("Nomor"))
+
+        layout.addWidget(self.nama_label)
+        layout.addWidget(self.nama_input)
+        layout.addWidget(self.nomor_label)
+        layout.addWidget(self.nomor_input)
+        layout.addWidget(self.tambah_button)
+        layout.addWidget(self.tampilkan_button)
+        layout.addWidget(self.hapus_button)
+        layout.addWidget(self.keluar_button)
+        layout.addWidget(self.tabel)
+
+        self.setLayout(layout)
+
+        self.tambah_button.clicked.connect(self.tambah_kontak)
+        self.tampilkan_button.clicked.connect(self.tampilkan_semua_kontak)
+        self.hapus_button.clicked.connect(self.hapus_kontak)
+        self.keluar_button.clicked.connect(self.close)
+
+        self.daftar_kontak = []
+
+    def tambah_kontak(self):
+        nama = self.nama_input.text()
+        nomor = self.nomor_input.text()
+        kontak = {'nama': nama, 'nomor': nomor}
+        self.daftar_kontak.append(kontak)
+        self.nama_input.clear()
+        self.nomor_input.clear()
+        self.tampilkan_semua_kontak()
+
+    def tampilkan_semua_kontak(self):
+        self.tabel.setRowCount(0)
+        for i, kontak in enumerate(self.daftar_kontak):
+            row = self.tabel.rowCount()
+            self.tabel.insertRow(row)
+            self.tabel.setItem(i, 0, QTableWidgetItem(kontak['nama']))
+            self.tabel.setItem(i, 1, QTableWidgetItem(kontak['nomor']))
+
+    def hapus_kontak(self):
+        nama = self.nama_input.text()
+        for kontak in self.daftar_kontak:
+            if kontak['nama'] == nama:
+                self.daftar_kontak.remove(kontak)
+                print(f"Kontak {nama} berhasil dihapus!")
+                return
+        print(f"Kontak {nama} tidak ditemukan.")
+
+if _name_ == "_main_":
+    app = QApplication(sys.argv)
+    daftar_kontak = DaftarKontak()
+    daftar_kontak.show()
+    sys.exit(app.exec_())
